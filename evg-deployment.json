@@ -5,27 +5,57 @@
     "_generator": {
       "name": "bicep",
       "version": "0.12.1.58429",
-      "templateHash": "169260006265607461"
+      "templateHash": "8439254440704164017"
     }
   },
   "parameters": {
-    "evgt_name": {
+    "EventGridTopicName": {
       "type": "string",
-      "defaultValue": "tktest-evg-evgt-531660"
+      "defaultValue": "tktest-evg-evgt-531660",
+      "metadata": {
+        "description": "Event Grid Topic Name"
+      }
+    },
+    "EventGridTopicSubscriptionName": {
+      "type": "string",
+      "defaultValue": "tktest-evg-evgs"
+    },
+    "location": {
+      "type": "string",
+      "defaultValue": "[resourceGroup().location]"
+    },
+    "deploymentId": {
+      "type": "string",
+      "defaultValue": "[resourceGroup().name]"
+    },
+    "PlatformTag": {
+      "type": "string",
+      "metadata": {
+        "description": "Resource Tag - Platform"
+      }
+    },
+    "EnvironmentTag": {
+      "type": "string"
+    },
+    "SubSystemTag": {
+      "type": "string"
+    },
+    "BudgetTag": {
+      "type": "string"
     }
   },
   "resources": [
     {
       "type": "Microsoft.EventGrid/topics",
       "apiVersion": "2022-06-15",
-      "name": "[parameters('evgt_name')]",
-      "location": "centralus",
+      "name": "[parameters('EventGridTopicName')]",
+      "location": "[parameters('location')]",
       "tags": {
-        "Budget": "unassigned",
+        "Budget": "[parameters('BudgetTag')]",
         "CreatedOnDate": "2022-11-04T22:56:16.850217Z",
-        "Env": "Unassigned",
-        "Platform": "Unassigned",
-        "SubSystem": "Unassigned"
+        "Env": "[parameters('EnvironmentTag')]",
+        "Platform": "[parameters('PlatformTag')]",
+        "SubSystem": "[parameters('SubSystemTag')]"
       },
       "identity": {
         "type": "None"
@@ -40,7 +70,7 @@
     {
       "type": "Microsoft.EventGrid/topics/eventSubscriptions",
       "apiVersion": "2022-06-15",
-      "name": "[format('{0}/{1}', parameters('evgt_name'), 'tktest-evg-evgs')]",
+      "name": "[format('{0}/{1}', parameters('EventGridTopicName'), 'tktest-evg-evgs')]",
       "properties": {
         "destination": {
           "properties": {
@@ -57,7 +87,7 @@
         }
       },
       "dependsOn": [
-        "[resourceId('Microsoft.EventGrid/topics', parameters('evgt_name'))]"
+        "[resourceId('Microsoft.EventGrid/topics', parameters('EventGridTopicName'))]"
       ]
     }
   ]
