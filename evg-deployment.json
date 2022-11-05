@@ -1,0 +1,64 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "metadata": {
+    "_generator": {
+      "name": "bicep",
+      "version": "0.12.1.58429",
+      "templateHash": "169260006265607461"
+    }
+  },
+  "parameters": {
+    "evgt_name": {
+      "type": "string",
+      "defaultValue": "tktest-evg-evgt-531660"
+    }
+  },
+  "resources": [
+    {
+      "type": "Microsoft.EventGrid/topics",
+      "apiVersion": "2022-06-15",
+      "name": "[parameters('evgt_name')]",
+      "location": "centralus",
+      "tags": {
+        "Budget": "unassigned",
+        "CreatedOnDate": "2022-11-04T22:56:16.850217Z",
+        "Env": "Unassigned",
+        "Platform": "Unassigned",
+        "SubSystem": "Unassigned"
+      },
+      "identity": {
+        "type": "None"
+      },
+      "properties": {
+        "inputSchema": "EventGridSchema",
+        "publicNetworkAccess": "Enabled",
+        "disableLocalAuth": false,
+        "dataResidencyBoundary": "WithinGeopair"
+      }
+    },
+    {
+      "type": "Microsoft.EventGrid/topics/eventSubscriptions",
+      "apiVersion": "2022-06-15",
+      "name": "[format('{0}/{1}', parameters('evgt_name'), 'tktest-evg-evgs')]",
+      "properties": {
+        "destination": {
+          "properties": {
+            "maxEventsPerBatch": 1,
+            "preferredBatchSizeInKilobytes": 64
+          },
+          "endpointType": "WebHook"
+        },
+        "filter": {},
+        "eventDeliverySchema": "EventGridSchema",
+        "retryPolicy": {
+          "maxDeliveryAttempts": 30,
+          "eventTimeToLiveInMinutes": 1440
+        }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.EventGrid/topics', parameters('evgt_name'))]"
+      ]
+    }
+  ]
+}
